@@ -14,10 +14,11 @@ YapmanPath="${HOME}/ext/aur"
 
 AUTHOR="@atahabaki"
 PROGRAM="yapman"
+VERSION="1.0.0"
 ABBR="Yet Another Package Manager for AUR"
 
 intro() {
-	echo -e "${BOLDG}${PROGRAM}${NORMAL} by ${BOLDR}${AUTHOR}${NORMAL}"
+	echo -e "${BOLDB}${PROGRAM}${NORMAL} version ${BOLDG}${VERSION}${NORMAL} by ${BOLDR}${AUTHOR}${NORMAL}"
 	echo -e "${BOLD}${ABBR}${NORMAL}\n"
 }
 
@@ -77,6 +78,14 @@ check_deps() {
 		echo -e "${ERR} git is not installed!"
 		exit 127
 	fi
+
+	if [ -e "$(which sudo)" ]
+	then
+		echo -e "${OK} git is installed."
+	else
+		echo -e "${ERR} git is not installed!"
+		exit 127
+	fi
 }
 
 install() {
@@ -94,7 +103,7 @@ install() {
 			echo -e "\n${WRN} Running in complete clean mode."
 			read -r -p "Are you Sure? [Y/n] " resp
 			case "$resp" in 
-				[yY]|"")
+				[yY] | "")
 					echo -e "\n${OK} Installing ${BOLDG}'${PACKDIR}'${NORMAL}...\n"
 					makepkg -sirc
 					;;
@@ -111,7 +120,7 @@ install() {
 			echo -e "\n${WRN} Running in clean mode."
 			read -r -p "Are you Sure? [Y/n] " resp
 			case "$resp" in 
-				[yY]|"")
+				[yY] | "")
 					echo -e "\n${OK} Installing ${BOLDG}'${PACKDIR}'${NORMAL}...\n"
 					makepkg -sirc
 					;;
@@ -141,7 +150,7 @@ check_update() {
 			echo -e "${WRN} Needs to be updated."
 			read -r -p "Update now? [Y/n] " resp
 			case "$resp" in
-				[Yy]"")
+				[Yy] | "")
 					echo -e "${OK} Updating $folder..."
 					read -r -p "Which mode \"Complete Clean\", \"Clean\", \"Normal\"? [C/d/n] " resp
 					case $resp in
@@ -171,21 +180,35 @@ check_update() {
 }
 
 remove() {
-	if [ $# -eq 1 ]
+	if [ $# -eq 2 ]
 	then
 		cd $YapmanPath
-		case "$1" in
-			"clean")
-				rm -rf $0
-				pacman -Rss $0
+		echo -e "${WRN} Removing '$1'"
+		read -r -p "Are you sure? [y/N]" resp
+		case $resp in
+			[Yy])
+				echo -e "$OK Removing '$1'..."
 				;;
-			"onldep")
-				pacman -R $0
+			[Nn] | "")
+				echo -e "${ERR} Aborting..."
+				exit 130
+				;;
+		esac
+		case "$2" in
+			"clean")
+				echo -e "${WRN} Running in complete clean mode."
+				rm -rf $1
+				sudo pacman -Rss $1
+				;;
+			"onlydep")
+				echo -e "${WRN} Running in clean mode."
+				rm -rf $1
+				sudo pacman -R $1
 				;;
 		esac
 	else
 		echo -e "${OK} Running in normal mode."
-		rm -rf $0
+		rm -rf $1
 	fi
 }
 
