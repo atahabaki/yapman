@@ -134,88 +134,130 @@ install() {
 	fi
 }
 
+#main() {
+#	if [ $# -gt 0 ]
+#	then
+#		if [ "$1" == "init" ]
+#		then
+#			echo -e "\n${OK} Initializing yapman."
+#			mkdir -p $YapmanPath && echo -e "${OK} ${YapmanPath} created as a container."
+#		elif [ "$1" == "-Cu" ]
+#		then
+#			echo -e "\n${OK} Checking updates..."
+#			for folder in $YapmanPath/*
+#			do
+#				echo -e "Checking updates for ${BOLDB}$(basename "$folder")${NORMAL}"
+#				cd $folder
+#				if [ "$(git pull | grep 'Already up to date')" == "Already up to date." ]
+#				then
+#					echo -e "${OK} Already up to date."
+#				else
+#					echo -e "${WRN} Needs to be updated."
+#				fi
+#			done
+#		elif [ "$1" == "-I" ]
+#		then
+#			if [ $# -eq 2 ]
+#			then
+#				install $2
+#			else
+#				arg_err
+#			fi
+#		elif [ "$1" == "-Ic" ]
+#		then
+#			if [ $# -eq 2 ]
+#			then
+#				install $2 "onlydep"
+#			else
+#				arg_err
+#			fi
+#		elif [ "$1" == "-Icc" ]
+#		then
+#			if [ $# -eq 2 ]
+#			then
+#				install $2 "clean"
+#			else
+#				arg_err
+#			fi
+#		elif [ "$1" == "-R" ]
+#		then
+#			if [ $# -eq 2 ]
+#			then
+#				remove $2
+#			else
+#				arg_err
+#			fi
+#		elif [ "$1" == "-Rc" ]
+#		then
+#			if [ $# -eq 2 ]
+#			then
+#				remove $2 "onlydep"
+#			else
+#				arg_err
+#			fi
+#		elif [ "$1" == "-Rcc" ]
+#		then
+#			if [ $# -eq 2 ]
+#			then
+#				remove $2 "clean"
+#			else
+#				arg_err
+#			fi
+#		elif [ "$1" == "--help" ]
+#		then
+#			if [ $# -eq 2 ]
+#			then
+#				usage $2
+#			else
+#				usage
+#			fi
+#		else
+#			echo "unknown err"
+#		fi
+#	else
+#		echo -e "${ERR} at least one argument needs to be passed."
+#	fi
+#}
+
 main() {
 	if [ $# -gt 0 ]
 	then
-		if [ "$1" == "init" ]
-		then
-			echo -e "\n${OK} Initializing yapman."
-			mkdir -p $YapmanPath && echo -e "${OK} ${YapmanPath} created as a container."
-		elif [ "$1" == "-Cu" ]
-		then
-			echo -e "\n${OK} Checking updates..."
-			for folder in $YapmanPath/*
-			do
-				echo -e "Checking updates for ${BOLDB}$(basename "$folder")${NORMAL}"
-				cd $folder
-				if [ "$(git pull | grep 'Already up to date')" == "Already up to date." ]
+		case "$1" in
+			"-Cu")
+				echo "check updates"
+				;;
+			"-Cf")
+				echo "check filter"
+				;;
+			"-I")
+				echo "install"
+				;;
+			"-Ic")
+				echo "clean cnstall"
+				;;
+			"-Icc")
+				echo "complete clean install"
+				;;
+			"-R")
+				echo "remove"
+				;;
+			"-Rc")
+				echo "clean remove"
+				;;
+			"-Rcc")
+				echo "complete clean remove"
+				;;
+			"-h")
+				if [ $# -eq 2 ]
 				then
-					echo -e "${OK} Already up to date."
+					usage "$2"
 				else
-					echo -e "${WRN} Needs to be updated."
+					usage
 				fi
-			done
-		elif [ "$1" == "-I" ]
-		then
-			if [ $# -eq 2 ]
-			then
-				install $2
-			else
-				arg_err
-			fi
-		elif [ "$1" == "-Ic" ]
-		then
-			if [ $# -eq 2 ]
-			then
-				install $2 "onlydep"
-			else
-				arg_err
-			fi
-		elif [ "$1" == "-Icc" ]
-		then
-			if [ $# -eq 2 ]
-			then
-				install $2 "clean"
-			else
-				arg_err
-			fi
-		elif [ "$1" == "-R" ]
-		then
-			if [ $# -eq 2 ]
-			then
-				remove $2
-			else
-				arg_err
-			fi
-		elif [ "$1" == "-Rc" ]
-		then
-			if [ $# -eq 2 ]
-			then
-				remove $2 "onlydep"
-			else
-				arg_err
-			fi
-		elif [ "$1" == "-Rcc" ]
-		then
-			if [ $# -eq 2 ]
-			then
-				remove $2 "clean"
-			else
-				arg_err
-			fi
-		elif [ "$1" == "--help" ]
-		then
-			if [ $# -eq 2 ]
-			then
-				usage $2
-			else
-				usage
-			fi
-		else
-			echo "unknown err"
-		fi
+				;;
+		esac
 	else
-		echo -e "${ERR} at least one argument needs to be passed."
+		arg_err
 	fi
 }
 
