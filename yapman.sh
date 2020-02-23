@@ -81,8 +81,8 @@ check_deps() {
 
 yuppack() {
 	FOLDER=$1
-	cd $1
-
+	cd "$1"
+	pwd
 }
 
 install() {
@@ -132,6 +132,48 @@ install() {
 		echo -e "\n${OK} Installing ${BOLDG}'${PACKDIR}'${NORMAL}...\n"
 		makepkg 
 	fi
+}
+
+check_update() {
+	echo -e "\n{OK}Checking updates..."
+	for folder in $YapmanPath/*
+	do
+		echo -e "Checking updates for ${BOLDB}$(basename "$folder")${NORMAL}"
+		cd $folder
+		if [ "$(git pull | grep 'Already up to date')" == "Already up to date." ]
+		then
+			echo -e "${OK} Already up to date."
+		else
+			echo -e "${WRN} Needs to be updated."
+			read -r -p "Update now? [Y/n] " resp
+			case "$resp" in
+				[Yy]"")
+					echo -e "${OK} Updating $folder..."
+					read -r -p "Which mode \"Complete Clean\", \"Clean\", \"Normal\"? [C/d/n] " resp
+					case $resp in
+						[Cc]"")
+							echo -e "${WRN} Running in complete clean install mode."
+							makepkg -sirc
+							;;
+						[Dd])
+							echo -e "${WRN} Running in clean install mode."
+							makepkg -sirc
+							cd ..
+							echo -e "${OK} Removing '${folder}' folder too..."
+							rm -rf $folder && echo -e "${OK} Done!.."
+							;;
+						[Nn])
+							echo -e "${OK} Running in normal install mode."
+							makepkg
+							;;
+					esac
+					;;
+				[Nn])
+					echo -e "${WRN} Update ASAP."
+					;;
+			esac
+		fi
+	done
 }
 
 #main() {
@@ -222,40 +264,43 @@ install() {
 main() {
 	if [ $# -gt 0 ]
 	then
-		case "$1" in
-			"-Cu")
-				echo "check updates"
-				;;
-			"-Cf")
-				echo "check filter"
-				;;
-			"-I")
-				echo "install"
-				;;
-			"-Ic")
-				echo "clean cnstall"
-				;;
-			"-Icc")
-				echo "complete clean install"
-				;;
-			"-R")
-				echo "remove"
-				;;
-			"-Rc")
-				echo "clean remove"
-				;;
-			"-Rcc")
-				echo "complete clean remove"
-				;;
-			"-h")
-				if [ $# -eq 2 ]
-				then
-					usage "$2"
-				else
-					usage
-				fi
-				;;
-		esac
+		if [ $# -eq 2 ]
+		then
+			case "$1" in
+				"-I")
+					install $2
+					;;
+				"-Ic")
+					install $2 "onlydep"
+					;;
+				"-Icc")
+					install $2 "clean"
+					;;
+				"-R")
+					echo "remove"
+					;;
+				"-Rc")
+					echo "clean remove"
+					;;
+				"-Rcc")
+					echo "complete clean remove"
+					;;
+				"-h")
+					usage $2
+					;;
+			esac
+		elif [ $# -eq 1 ]
+		then
+			case "$1" in
+				"-Cu")
+					check_update
+					;;
+				"-Cf")
+					echo "check filter"
+					;;
+			esac
+		else
+		fi
 	else
 		arg_err
 	fi
