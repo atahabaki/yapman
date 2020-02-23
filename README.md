@@ -35,10 +35,21 @@ yapman -Icc <AUR_URI>
 
 Installs and removes from **$YapmanPackagesPath** and also clears install-time dependencies.
 
-## Next-Release Features
-
 ```bash
-yapman -R <AUR_URI>
+yapman -R <package>
 ```
 
-Removes the package completely.
+Removes only folder.
+
+
+```bash
+yapman -Rc <package>
+```
+
+Removes the package only.
+
+```bash
+yapman -Rcc <package>
+```
+
+Removes the package with its dependencies completely.

@@ -129,7 +129,7 @@ install() {
 }
 
 check_update() {
-	echo -e "\n${OK}Checking updates..."
+	echo -e "\n${OK} Checking updates..."
 	for folder in $YapmanPath/*
 	do
 		echo -e "Checking updates for ${BOLDB}$(basename "$folder")${NORMAL}"
@@ -170,6 +170,25 @@ check_update() {
 	done
 }
 
+remove() {
+	if [ $# -eq 1 ]
+	then
+		cd $YapmanPath
+		case "$1" in
+			"clean")
+				rm -rf $0
+				pacman -Rss $0
+				;;
+			"onldep")
+				pacman -R $0
+				;;
+		esac
+	else
+		echo -e "${OK} Running in normal mode."
+		rm -rf $0
+	fi
+}
+
 main() {
 	if [ $# -gt 0 ]
 	then
@@ -186,13 +205,13 @@ main() {
 					install $2 "clean"
 					;;
 				"-R")
-					echo "remove"
+					remove $2
 					;;
 				"-Rc")
-					echo "clean remove"
+					remove $2 "onlydep"
 					;;
 				"-Rcc")
-					echo "complete clean remove"
+					remove $2 "clean"
 					;;
 				"-h")
 					usage $2
