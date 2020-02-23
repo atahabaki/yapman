@@ -22,7 +22,7 @@ intro() {
 }
 
 arg_err() {
-	echo -e "${ERR} wrong arguments. See the usage by '--help'" 
+	echo -e "${ERR} wrong arguments. See the usage by '-h'" 
 	exit 127
 }
 
@@ -79,12 +79,6 @@ check_deps() {
 	fi
 }
 
-yuppack() {
-	FOLDER=$1
-	cd "$1"
-	pwd
-}
-
 install() {
 	URI=$1
 	cd $YapmanPath
@@ -135,7 +129,7 @@ install() {
 }
 
 check_update() {
-	echo -e "\n{OK}Checking updates..."
+	echo -e "\n${OK}Checking updates..."
 	for folder in $YapmanPath/*
 	do
 		echo -e "Checking updates for ${BOLDB}$(basename "$folder")${NORMAL}"
@@ -288,6 +282,8 @@ main() {
 				"-h")
 					usage $2
 					;;
+				*)
+					usage
 			esac
 		elif [ $# -eq 1 ]
 		then
@@ -298,8 +294,14 @@ main() {
 				"-Cf")
 					echo "check filter"
 					;;
+				"-h")
+					usage
+					;;
+				*)
+					usage
 			esac
 		else
+			usage
 		fi
 	else
 		arg_err
