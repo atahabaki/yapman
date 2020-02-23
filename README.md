@@ -15,7 +15,7 @@ The default value of YapmanPackagesPath is "**~/ext/**".
 yapman -Cu
 ```
 
-This **c**hecks **u**pdates previously installed aur packages or currently stored in **$YapmanPackagesPath**.
+This **c**hecks **u**pdates previously installed aur packages or currently stored in **$YapmanPath**.
 
 ```bash
 yapman -I <AUR_URI>
@@ -33,7 +33,7 @@ Installs and removes the installed unnecessary dependencies (install time depend
 yapman -Icc <AUR_URI>
 ```
 
-Installs and removes from **$YapmanPackagesPath** and also clears install-time dependencies.
+Installs and removes from **$YapmanPath** and also clears install-time dependencies.
 
 ```bash
 yapman -R <package>
