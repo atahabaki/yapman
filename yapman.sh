@@ -9,12 +9,14 @@ OK="${BOLDG}[OK]${NORMAL}"
 ERR="${BOLDR}[ERR]${NORMAL}"
 WRN="${BOLDY}[WRN]${NORMAL}"
 
-DIR=`dirname $0`
-YapmanPath="${HOME}/ext/aur"
+YapmanPath="${HOME}/.yapman"
+YapmanConfigPath="${YapmanPath}/yapman.conf"
+YapmanCachePath="${YapmanPath}/cache"
+YapmanPackagePath="${YapmanPath}/packages"
 
 AUTHOR="@atahabaki"
 PROGRAM="yapman"
-VERSION="1.0.0"
+VERSION="2.0.0"
 ABBR="Yet Another Package Manager for AUR"
 
 intro() {
@@ -22,248 +24,160 @@ intro() {
 	echo -e "${BOLD}${ABBR}${NORMAL}\n"
 }
 
+print_err() {
+	if [ $# -eq 1 ]
+	then
+		echo -e "${ERR} $1"
+	else
+		echo -e "${ERR} Unknown error occured!"
+	fi
+}
+
+print_ok() {
+	if [ $# -eq 1 ]
+	then
+		echo -e "${OK} $1"
+	else
+		echo -e "${OK} Everything is fine!"
+	fi
+}
+
+print_warning() {
+	if [ $# -eq 1 ]
+	then
+		echo -e "${WRN} $1"
+	else
+		echo -e "${WRN} Something idk happenening!"
+	fi
+}
+
 arg_err() {
-	echo -e "${ERR} wrong arguments. See the usage by '-h'" 
+	print_err "Missing or extra argument.\n"
+	if [ $# -eq 1 ]
+	then
+		help_command $1
+	else
+		help_command
+	fi
 	exit 127
 }
 
+abort() {
+	print_err "Abort."
+	exit 130
+}
+
+confirm() {
+	read -r -p "$1 [Y/n] " resp
+	case $resp in
+		[Yy] | "")
+			return 0
+			;;
+		[Nn])
+			return 1
+			;;
+		*)
+			confirm "$1"
+			;;
+	esac
+}
+
+initialize() {
+	mkdir -p $YapmanPath $YapmanCachePath $YapmanPackagePath && print_ok "Necessary folders has been created."
+	touch $YapmanConfigPath && print_ok "Config file has been successfully created."
+	print_ok "Initialized yapman. Enjoy now!.."
+}
+
+init() {
+	if [ -d $YapmanPath ]
+	then
+		print_warning "Already initialized."
+		if confirm "Re-initialize?"
+		then
+			initialize
+		else
+			abort
+		fi
+	else
+		initialize
+	fi
+	exit 0
+}
+
+version() {
+	echo -e $VERSION
+}
+
 usage() {
-	if [ $# -eq 0 ]
-	then
-		echo -e "${BOLD}Usage:${NORMAL}\n"
-		echo -e "-C<u:f>   :Checks update or show results for filter."
-		echo -e "-I[c:cc]  :Installs the package."
-		echo -e "-R[c:cc]  :Removes the package."
-	else
-		if [ "$1" == "-I" ]
-		then
-			echo -e "${BOLD}Usage:\t${NORMAL}I[c:cc]\n"
-			echo -e "-c        :clean install mode."
-			echo -e "-cc       :complete clean install mode."
-		elif [ "$1" == "-C" ]
-		then
-			echo -e "${BOLD}Usage:\t${NORMAL}C<u:f>\n"
-			echo -e "-u        :Checks for update."
-			echo -e "-f        :Filters installed packages."
-		elif [ "$1" == "-R" ]
-		then
-			echo -e "${BOLD}Usage:\t${NORMAL}R[c:cc]\n"
-			echo -e "-c        :clean remove mode."
-			echo -e "-cc       :complete clean remove mode."
-		fi
-	fi
+	echo -e "${BOLD}USAGE:${NORMAL}\nyapman.sh <operation> [...]"
+	echo -e "${BOLD}Operations:${NORMAL}"
+	echo -e "  {init}"
+	echo -e "  {-u update}"
+	echo -e "  {-i install} <package(s)>"
+	echo -e "  {-g get} <package(s)>"
+	echo -e "  {info} <package(s)>"
+	echo -e "  {-r remove} <package(s)>"
+	echo -e "  {-s search} <package(s)>"
+	echo -e "  {-c clear-cache}"
+	echo -e "  {-v --version}"
+	echo -e "  {-h --help}"
+	echo -e "\nUse 'yapman.sh {-h --help}' with an operation for available options."
 }
 
-check_deps() {
-	if [ -e "$(which pacman)" ]
-	then
-		echo -e "${OK} pacman is installed."
-	else
-		echo -e "${ERR} pacman is not installed!"
-		exit 127
-	fi
 
-	if [ -e "$(which makepkg)" ]
-	then
-		echo -e "${OK} makepkg is installed."
-	else
-		echo -e "${ERR} makepkg is not installed!"
-		exit 127
-	fi
 
-	if [ -e "$(which git)" ]
+help_command() {
+	if [ $# -eq 1 ]
 	then
-		echo -e "${OK} git is installed."
-	else
-		echo -e "${ERR} git is not installed!"
-		exit 127
-	fi
-
-	if [ -e "$(which sudo)" ]
-	then
-		echo -e "${OK} git is installed."
-	else
-		echo -e "${ERR} git is not installed!"
-		exit 127
-	fi
-}
-
-install() {
-	URI=$1
-	cd $YapmanPath
-	pwd
-	PACKDIR="$(echo $URI | sed 's/https:\/\/aur.archlinux.org\///' | sed 's/.git//')"
-	echo -e "${OK} Ready for '$PACKDIR'..."
-	git clone $URI
-	cd $PACKDIR
-	if [ $# -eq 2 ]
-	then
-		if [ "$2" == "clean" ]
-		then
-			echo -e "\n${WRN} Running in complete clean mode."
-			read -r -p "Are you Sure? [Y/n] " resp
-			case "$resp" in 
-				[yY] | "")
-					echo -e "\n${OK} Installing ${BOLDG}'${PACKDIR}'${NORMAL}...\n"
-					makepkg -sirc
-					;;
-				[nN])
-					echo -e "${ERR} Aborting..."
-					exit 130
-					;;
-			esac
-			cd ..
-			echo -e "${OK} Removing '${PACKDIR}' folder too..."
-			rm -rf $PACKDIR && echo -e "${OK} Done!.."
-		elif [ "$2" == "onlydep" ]
-		then
-			echo -e "\n${WRN} Running in clean mode."
-			read -r -p "Are you Sure? [Y/n] " resp
-			case "$resp" in 
-				[yY] | "")
-					echo -e "\n${OK} Installing ${BOLDG}'${PACKDIR}'${NORMAL}...\n"
-					makepkg -sirc
-					;;
-				[nN])
-					echo -e "${ERR} Aborting..."
-					exit 130
-					;;
-			esac
-		fi
-	else
-		echo -e "\n${OK} Running in normal mode."
-		echo -e "\n${OK} Installing ${BOLDG}'${PACKDIR}'${NORMAL}...\n"
-		makepkg 
-	fi
-}
-
-check_update() {
-	echo -e "\n${OK} Checking updates..."
-	for folder in $YapmanPath/*
-	do
-		echo -e "Checking updates for ${BOLDB}$(basename "$folder")${NORMAL}"
-		cd $folder
-		if [ "$(git pull | grep 'Already up to date')" == "Already up to date." ]
-		then
-			echo -e "${OK} Already up to date."
-		else
-			echo -e "${WRN} Needs to be updated."
-			read -r -p "Update now? [Y/n] " resp
-			case "$resp" in
-				[Yy] | "")
-					echo -e "${OK} Updating $folder..."
-					read -r -p "Which mode \"Complete Clean\", \"Clean\", \"Normal\"? [C/d/n] " resp
-					case $resp in
-						[Cc]"")
-							echo -e "${WRN} Running in complete clean install mode."
-							makepkg -sirc
-							;;
-						[Dd])
-							echo -e "${WRN} Running in clean install mode."
-							makepkg -sirc
-							cd ..
-							echo -e "${OK} Removing '${folder}' folder too..."
-							rm -rf $folder && echo -e "${OK} Done!.."
-							;;
-						[Nn])
-							echo -e "${OK} Running in normal install mode."
-							makepkg
-							;;
-					esac
-					;;
-				[Nn])
-					echo -e "${WRN} Update ASAP."
-					;;
-			esac
-		fi
-	done
-}
-
-remove() {
-	if [ $# -eq 2 ]
-	then
-		cd $YapmanPath
-		echo -e "${WRN} Removing '$1'"
-		read -r -p "Are you sure? [y/N]" resp
-		case $resp in
-			[Yy])
-				echo -e "$OK Removing '$1'..."
+		case $1 in
+			"search_package")
+				echo -e ""
 				;;
-			[Nn] | "")
-				echo -e "${ERR} Aborting..."
-				exit 130
-				;;
-		esac
-		case "$2" in
-			"clean")
-				echo -e "${WRN} Running in complete clean mode."
-				rm -rf $1
-				sudo pacman -Rss $1
-				;;
-			"onlydep")
-				echo -e "${WRN} Running in clean mode."
-				rm -rf $1
-				sudo pacman -R $1
+			*)
+				usage
 				;;
 		esac
 	else
-		echo -e "${OK} Running in normal mode."
-		rm -rf $1
+		usage
 	fi
 }
 
-main() {
-	if [ $# -gt 0 ]
+search_package() {
+	if [ $# -ge 1 ]
 	then
-		if [ $# -eq 2 ]
-		then
-			case "$1" in
-				"-I")
-					install $2
-					;;
-				"-Ic")
-					install $2 "onlydep"
-					;;
-				"-Icc")
-					install $2 "clean"
-					;;
-				"-R")
-					remove $2
-					;;
-				"-Rc")
-					remove $2 "onlydep"
-					;;
-				"-Rcc")
-					remove $2 "clean"
-					;;
-				"-h")
-					usage $2
-					;;
-				*)
-					usage
-			esac
-		elif [ $# -eq 1 ]
-		then
-			case "$1" in
-				"-Cu")
-					check_update
-					;;
-				"-Cf")
-					echo "check filter"
-					;;
-				"-h")
-					usage
-					;;
-				*)
-					usage
-			esac
-		else
-			usage
-		fi
+		for package in $@
+		do
+			print_ok "Searhing ${BOLDB}${package}${NORMAL}"
+		done
 	else
 		arg_err
 	fi
 }
 
-intro
+main() {
+	if [ -e YapmanConfigPath ]
+	then
+		source $YapmanConfigPath
+	fi
+	if [ $# -ge 1 ]
+	then
+		if [ "$1" != "-v" ] && [ "$1" != "--version" ]
+		then
+			intro
+		fi
+		case $1 in
+			"-v" | "--version") version;;
+			"-h" | "--help") 
+				help_command
+				;;
+			"init")
+				init
+				;;
+		esac
+	else
+		intro
+		arg_err
+	fi
+}
+
 main $@
