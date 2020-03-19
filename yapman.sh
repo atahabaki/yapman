@@ -29,6 +29,7 @@ intro() {
 }
 
 can_run() {
+	echo -e "${BOLD}Checking dependencies...${NORMAL}"
 	if [ -e "$(which pacman)" ]
 	then
 		print_ok "${BOLD}pacman${NORMAL} is installed."
@@ -174,6 +175,19 @@ search_package() {
 		for package in $@
 		do
 			print_ok "Searhing ${BOLDB}${package}${NORMAL}"
+			local cache_path="${YapmanCachePath}/search_results_${package}.json"
+			curl -s -o $cache_path "${AUR_SEARCH_URL}${package}"
+			local status=$(jq -r '.type' $cache_path)
+			if [ "$status" = "error" ]
+			then
+				print_err "$(jq -r '.error' $cache_path)"
+			elif [ "$status" = "search" ]
+			then
+				echo -e "${BOLD}$(jq -r '.results[] | .PackageBase' $cache_path)${NORMAL}"
+			else
+				print_err "We've encountered some unexpected results."
+				exit 1
+			fi
 		done
 	else
 		arg_err
@@ -186,7 +200,7 @@ get_package_info() {
 		for package in $@
 		do
 			print_ok "Getting info 4 ${BOLDB}${package}${NORMAL}"
-			local cache_path="${YapmanCachePath}/search_results_${package}.json"
+			local cache_path="${YapmanCachePath}/info_${package}.json"
 			curl -s -o $cache_path "${AUR_INFO_URL}${package}"
 			local status=$(jq -r '.type' $cache_path)
 			if [ "$status" = "error" ]
@@ -215,7 +229,6 @@ main() {
 		if [ "$1" != "-v" ] && [ "$1" != "version" ]
 		then
 			intro
-			echo -e "${BOLD}Checking dependencies.${NORMAL}"
 			can_run && echo
 		fi
 		case $1 in
