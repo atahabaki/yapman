@@ -14,6 +14,10 @@ YapmanConfigPath="${YapmanPath}/yapman.conf"
 YapmanCachePath="${YapmanPath}/cache"
 YapmanPackagePath="${YapmanPath}/packages"
 
+AUR_BASE_URL="https://aur.archlinux.org/rpc/?v=5&type="
+AUR_SEARCH_URL="${AUR_BASE_URL}search&arg="
+AUR_INFO_URL="${AUR_BASE_URL}info&arg="
+
 AUTHOR="@atahabaki"
 PROGRAM="yapman"
 VERSION="2.0.0"
@@ -22,6 +26,30 @@ ABBR="Yet Another Package Manager for AUR"
 intro() {
 	echo -e "${BOLDB}${PROGRAM}${NORMAL} version ${BOLDG}${VERSION}${NORMAL} by ${BOLDR}${AUTHOR}${NORMAL}"
 	echo -e "${BOLD}${ABBR}${NORMAL}\n"
+}
+
+can_run() {
+	if [ -e "$(which pacman)" ]
+	then
+		print_ok "${BOLD}pacman${NORMAL} is installed."
+	else
+		print_err "${BOLD}pacman${NORMAL} is not installed. You need it to run this."
+		exit 127
+	fi
+	if [ -e "$(which jq)" ]
+	then
+		print_ok "${BOLD}jq${NORMAL} is installed."
+	else
+		print_err "${BOLD}jq${NORMAL} is not installed. You need it to run this."
+		exit 127
+	fi
+	if [ -e "$(which bash)" ]
+	then
+		print_ok "${BOLD}bash${NORMAL} is installed."
+	else
+		print_err "${BOLD}bash${NORMAL} is not installed. You need it to run this."
+		exit 127
+	fi
 }
 
 print_err() {
@@ -124,8 +152,6 @@ usage() {
 	echo -e "\nUse 'yapman.sh {-h --help}' with an operation for available options."
 }
 
-
-
 help_command() {
 	if [ $# -eq 1 ]
 	then
@@ -154,6 +180,31 @@ search_package() {
 	fi
 }
 
+get_package_info() {
+	if [ $# -ge 1 ]
+	then
+		for package in $@
+		do
+			print_ok "Getting info 4 ${BOLDB}${package}${NORMAL}"
+			local cache_path="${YapmanCachePath}/search_results_${package}.json"
+			curl -s -o $cache_path "${AUR_INFO_URL}${package}"
+			local status=$(jq -r '.type' $cache_path)
+			if [ "$status" = "error" ]
+			then
+				print_err "$(jq -r '.error' $cache_path)"
+			elif [ "$status" = "multiinfo" ]
+			then
+				echo -e "$(jq -r '.results[] | to_entries[] | "\u001b[1m\(.key):\u001b[0m \(.value)"' $cache_path)"
+			else
+				print_err "We've encountered some unexpected results."
+				exit 1
+			fi
+		done
+	else
+		arg_err
+	fi
+}
+
 main() {
 	if [ -e YapmanConfigPath ]
 	then
@@ -161,14 +212,22 @@ main() {
 	fi
 	if [ $# -ge 1 ]
 	then
-		if [ "$1" != "-v" ] && [ "$1" != "--version" ]
+		if [ "$1" != "-v" ] && [ "$1" != "version" ]
 		then
 			intro
+			echo -e "${BOLD}Checking dependencies.${NORMAL}"
+			can_run && echo
 		fi
 		case $1 in
-			"-v" | "--version") version;;
-			"-h" | "--help") 
+			"-v" | "version") version;;
+			"-h" | "help") 
 				help_command
+				;;
+			"-s" | "search")
+				search_package ${@:2}
+				;;
+			"info")
+				get_package_info ${@:2}
 				;;
 			"init")
 				init
@@ -176,6 +235,7 @@ main() {
 		esac
 	else
 		intro
+		can_run && echo
 		arg_err
 	fi
 }
