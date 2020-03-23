@@ -13,7 +13,9 @@ YapmanPath="${HOME}/.yapman"
 YapmanConfigPath="${YapmanPath}/yapman.conf"
 YapmanCachePath="${YapmanPath}/cache"
 YapmanPackagePath="${YapmanPath}/packages"
+YapmanLogsPath="${YapmanPath}/logs"
 
+AUR_DOMAIN="https://aur.archlinux.org"
 AUR_BASE_URL="https://aur.archlinux.org/rpc/?v=5&type="
 AUR_SEARCH_URL="${AUR_BASE_URL}search&arg="
 AUR_INFO_URL="${AUR_BASE_URL}info&arg="
@@ -112,7 +114,7 @@ confirm() {
 }
 
 initialize() {
-	mkdir -p $YapmanPath $YapmanCachePath $YapmanPackagePath && print_ok "Necessary folders has been created."
+	mkdir -p $YapmanPath $YapmanCachePath $YapmanLogsPath $YapmanPackagePath && print_ok "Necessary folders has been created."
 	touch $YapmanConfigPath && print_ok "Config file has been successfully created."
 	print_ok "Initialized yapman. Enjoy now!.."
 }
@@ -148,9 +150,9 @@ usage() {
 	echo -e "  {-r remove} <package(s)>"
 	echo -e "  {-s search} <package(s)>"
 	echo -e "  {-c clear-cache}"
-	echo -e "  {-v --version}"
-	echo -e "  {-h --help}"
-	echo -e "\nUse 'yapman.sh {-h --help}' with an operation for available options."
+	echo -e "  {-v version}"
+	echo -e "  {-h help}"
+	echo -e "\nUse 'yapman.sh {-h help}' with an operation for available options."
 }
 
 help_command() {
@@ -169,21 +171,37 @@ help_command() {
 	fi
 }
 
-search_package() {
+clone_repo() {
+	if [ $# -eq 1 ]
+	then
+		git clone "${AUR_DOMAIN}/${1}.git" && return 0 || return 1
+	fi
+}
+
+install_package() {
 	if [ $# -ge 1 ]
 	then
 		for package in $@
 		do
-			print_ok "Searhing ${BOLDB}${package}${NORMAL}"
-			local cache_path="${YapmanCachePath}/search_results_${package}.json"
-			curl -s -o $cache_path "${AUR_SEARCH_URL}${package}"
+			print_ok "Getting ready to install ${BOLDB}${package}${NORMAL}"
+			local cache_path="${YapmanCachePath}/install_${package}.json"
+			curl -s -o $cache_path "${AUR_INFO_URL}${package}"
 			local status=$(jq -r '.type' $cache_path)
 			if [ "$status" = "error" ]
 			then
 				print_err "$(jq -r '.error' $cache_path)"
-			elif [ "$status" = "search" ]
+			elif [ "$status" = "multiinfo" ]
 			then
-				echo -e "${BOLD}$(jq -r '.results[] | .PackageBase' $cache_path)${NORMAL}"
+				cd $YapmanPackagePath
+				local package_base="$(jq -r '.results[0].PackageBase' $cache_path)"
+				if clone_repo $package_base
+				then
+					cd $package_base
+				else
+					print_err "Something we did not calculated happened.  :/"
+					exit 1
+				fi
+
 			else
 				print_err "We've encountered some unexpected results."
 				exit 1
@@ -219,22 +237,99 @@ get_package_info() {
 	fi
 }
 
-main() {
-	if [ -e YapmanConfigPath ]
+search_package() {
+	if [ $# -ge 1 ]
+	then
+		for package in $@
+		do
+			print_ok "Searhing ${BOLDB}${package}${NORMAL}"
+			local cache_path="${YapmanCachePath}/search_results_${package}.json"
+			curl -s -o $cache_path "${AUR_SEARCH_URL}${package}"
+			local status=$(jq -r '.type' $cache_path)
+			if [ "$status" = "error" ]
+			then
+				print_err "$(jq -r '.error' $cache_path)"
+			elif [ "$status" = "search" ]
+			then
+				echo -e "${BOLD}$(jq -r '.results[] | .PackageBase' $cache_path)${NORMAL}"
+			else
+				print_err "We've encountered some unexpected results."
+				exit 1
+			fi
+		done
+	else
+		arg_err
+	fi
+}
+
+clear_cache() {
+	print_warning "Cache files will be cleaned. Be careful!"
+	rm -rf $YapmanCachePath
+	if [ -e $YapmanCachePath ]
+	then
+		print_err "Could not delete the cache files."
+		echo -e "You could try to remove them by yourself."
+		echo -e "Cache files is here, take a look: ${YapmanCachePath}"
+	else
+		print_ok "Cache files cleaned."
+		echo -e "What a clean space. Yum yum yum... :D"
+		mkdir $YapmanCachePath
+	fi
+}
+
+load_config() {
+	if [ -e $YapmanConfigPath ]
 	then
 		source $YapmanConfigPath
+		if [ "$check_dependency_every_time" = "true" ]
+		then
+			can_run && echo
+		fi
+		if [ "$colorful_output" = "false" ]
+		then
+			BOLD="\033[1m"
+			BOLDB="\033[1m"
+			BOLDR="\033[1m"
+			BOLDG="\033[1m"
+			BOLDY="\033[1m"
+			NORMAL="\033[0m"
+		fi
+		if [ "$bold_output" = "false" ]
+		then
+			BOLD="\033[0m"
+			BOLDB="\033[0;34m"
+			BOLDR="\033[0;31m"
+			BOLDG="\033[0;32m"
+			BOLDY="\033[0;33m"
+			NORMAL="\033[0m"
+		fi
+		if [ "$no_visual" = "true" ]
+		then
+			BOLD="\033[0m"
+			BOLDB="\033[0m"
+			BOLDR="\033[0m"
+			BOLDG="\033[0m"
+			BOLDY="\033[0m"
+			NORMAL="\033[0m"
+		fi
 	fi
+}
+
+main() {
+	load_config
 	if [ $# -ge 1 ]
 	then
 		if [ "$1" != "-v" ] && [ "$1" != "version" ]
 		then
 			intro
-			can_run && echo
 		fi
 		case $1 in
 			"-v" | "version") version;;
 			"-h" | "help") 
 				help_command
+				;;
+			"-i" | "install")
+				install_package ${@:2}
 				;;
 			"-s" | "search")
 				search_package ${@:2}
@@ -245,10 +340,15 @@ main() {
 			"init")
 				init
 				;;
+  			"-c" | "clear-cache")
+			  	clear_cache
+				;;
+			*)
+				arg_err
+				;;
 		esac
 	else
 		intro
-		can_run && echo
 		arg_err
 	fi
 }
