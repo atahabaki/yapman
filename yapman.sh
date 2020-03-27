@@ -197,6 +197,28 @@ install_package() {
 				if clone_repo $package_base
 				then
 					cd $package_base
+					local clean
+					local remove
+					local syncdeps
+					if [ "${clean_after_build}" = "false" ]
+					then
+						clean=""
+					else
+						clean="c" 
+					fi
+					if [ "${remove_deps_after_build}" = "false" ]
+					then
+						remove=""
+					else
+						remove="r"
+					fi
+					if [ "${sync_missing_deps_pacman}" = "false" ]
+					then
+						syncdeps=""
+					else
+						syncdeps="s"
+					fi
+					makepkg -${syncdeps}i${remove}${clean}
 				else
 					print_err "Something we did not calculated happened.  :/"
 					exit 1
