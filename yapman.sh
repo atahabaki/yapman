@@ -16,6 +16,7 @@ YapmanConfigPath="${XDG_CONFIG_HOME}/yapman.conf"
 YapmanCachePath="${XDG_CACHE_HOME}/"
 YapmanPackagePath="${XDG_DATA_HOME}/packages"
 YapmanLogsPath="${XDG_CACHE_HOME}/logs"
+YapmanExampleConfigPath="${XDG_CONFIG_HOME}/yapman.d.conf"
 
 AUR_DOMAIN="https://aur.archlinux.org"
 AUR_BASE_URL="https://aur.archlinux.org/rpc/?v=5&type="
@@ -203,11 +204,88 @@ Use 'yapman.sh {-h help}' with an operation for available options."
 }
 
 help_command() {
-	if [ $# -eq 1 ]
+	if [ "$#" -eq 1 ]
 	then
 		case $1 in
-			"search_package")
-				"$echo" -e ""
+			"init")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {init}
+
+${BOLD}DEFINITION:${NORMAL}
+{init} is used for initializing yapman. Creating directories and config files...
+
+Directories:
+Downloaded Packages' Directory: ${YapmanPackagePath}
+Cache Directory: ${YapmanCachePath}
+Logs' Directory: ${YapmanLogsPath}
+
+Files:
+Config File: ${YapmanConfigPath}
+Example Config File: ${YapmanExampleConfigPath}
+"
+				;;
+			"-u" | "update")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-u update}
+
+${BOLD}DEFINITION:${NORMAL}
+{-u update} can be used for checking updates and installing immediatly."
+				;;
+			"-i" | "install")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-i install} <package(s)>
+
+${BOLD}DEFINITION:${NORMAL}
+{-i install} for installing package(s)."
+				;;
+			"-g" | "get")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-g get} <package(s)>
+
+${BOLD}DEFINITION:${NORMAL}
+{-g get} for getting package(s). Basically, downloads package."
+				;;
+			"-a" | "info")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-a info} <package(s)>
+
+${BOLD}DEFINITION:${NORMAL}
+{-a info} for getting information about package(s). Basically, shows information."
+				;;
+			"-r" | "remove")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-r remove} <package(s)>
+
+${BOLD}DEFINITION:${NORMAL}
+{-r remove} for removing package(s). Basically uninstalls the package."
+				;;
+			"-s" | "search")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-s search} <package(s)>
+
+${BOLD}DEFINITION:${NORMAL}
+{-s search} for searching package(s). In simple terms, trys to find a list of packages that similar to your search."
+				;;
+			"-c" | "clear-cache")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-c clear-cache}
+
+${BOLD}DEFINITION:${NORMAL}
+{-c clear-cache} for clearing caches. In simple terms, removes unnecessary files/folders."
+				;;
+			"-v" | "version")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-v version}
+
+${BOLD}DEFINITION:${NORMAL}
+{-v version} for couts the version. Simply, shows version of this program."
+				;;
+			"-h" | "help")
+				"$echo" -e "${BOLD}USAGE:${NORMAL}
+yapman.sh {-h help} <operation>
+
+${BOLD}DEFINITION:${NORMAL}
+{-h help} prints helpful messages like this one. Shows help messages."
 				;;
 			*)
 				usage
@@ -219,7 +297,7 @@ help_command() {
 }
 
 clone_repo() {
-	if [ $# -eq 1 ]
+	if [ "$#" -eq 1 ]
 	then
 		"$git" clone -q "${AUR_DOMAIN}/${1}.git" && return 0 || return 1
 	fi
@@ -504,7 +582,9 @@ main() {
 				;;
   			"-c" | "clear-cache") clear_cache;;
 			"-v" | "version") version;;
-			"-h" | "help") help_command;;
+			"-h" | "help")
+				help_command "${@:2}"
+				;;
 			*) arg_err;;
 		esac
 	else
