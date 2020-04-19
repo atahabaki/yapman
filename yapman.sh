@@ -333,7 +333,7 @@ update() {
 	for folder in *
 	do
 		cd "$YapmanPackagePath/$folder" || exit 1
-		print_ok "Checking updates 4 ${BOLDB}${package}${NORMAL}"
+		print_ok "Checking updates 4 ${BOLDB}${folder}${NORMAL}"
 		if [ "$("$git" pull | grep "Already up to date.")" = "Already up to date." ]
 		then
 			print_ok "Already up to date."
