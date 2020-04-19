@@ -1,6 +1,7 @@
 pkgbase = yapman
     pkgdesc = Yet Another AUR Package Manager. Lightweight and powerful.
     pkgver = 2.0.0
+    pkgrel = 2
     url = https://github.com/atahabaki/yapman
     arch = any
     license = MIT

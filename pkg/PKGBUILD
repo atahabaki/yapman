@@ -1,6 +1,7 @@
 # Maintainer A. Taha Baki
 pkgname=yapman
 pkgver=2.0.0
+pkgrel=2
 pkgdesc="Yet Another AUR Package Manager. Lightweight and powerful."
 arch=('any')
 url="https://github.com/atahabaki/yapman"
