@@ -13,7 +13,7 @@ depends=(
     'jq'
 )
 source=("$pkgname-$pkgver.tar.xz::$url/releases/download/$pkgver/v$pkgver.tar.xz")
-sha256sums=("d760b80d83ab9bfbf3ce4fee2b7fd552cd87d6ed882d5bea8db20c1326447c98"
+sha256sums=("f2f00262f5ccf248b91921eb80c84288350d29a420c874590dc3f211777385ef"
             "SKIP")
 build() {
     cd "$pkgname-$pkgver"
