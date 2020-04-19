@@ -1,0 +1,14 @@
+pkgbase = yapman
+    pkgdesc = Yet Another AUR Package Manager. Lightweight and powerful.
+    pkgver = 2.0.0
+    url = https://github.com/atahabaki/yapman
+    arch = any
+    license = MIT
+    depends = pacman
+    depends = sudo
+    depends = curl
+    depends = git
+    depends = jq
+    source = yapman-2.0.0.tar.xz::https://github.com/atahabaki/yapman/releases/download/2.0.0/v2.0.0.tar.xz
+    sha256sums = f2f00262f5ccf248b91921eb80c84288350d29a420c874590dc3f211777385ef
+pkgname = yapman
