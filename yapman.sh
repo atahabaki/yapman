@@ -363,7 +363,7 @@ install_package() {
 				print_err "$("$jq" -r '.error' "$cache_path")"
 			elif [ "$status" = "multiinfo" ] && [ -d "$YapmanPackagePath" ]
 			then
-				cd "$YapmanPackagePath" || print_err "We couldn't find: ${YapmanPackagePath}" && exit 1
+				cd "$YapmanPackagePath" || print_err "We couldn't find: ${YapmanPackagePath}"
 				local package_base="$("$jq" -r '.results[0].PackageBase' "$cache_path")"
 				if clone_repo "$package_base"
 				then
