@@ -1,6 +1,6 @@
 # yapman
 
-![yapman logo](/mnt/this/Data/Projects/programming/linux/yapman/yapman-logo3.png)
+![yapman logo](yapman-logo3.png)
 
 **YAPMAN** 2.0 (Yet Another AUR Package Manager) is AUR helper. It is not like any other AUR helper this is much more simple.
 
