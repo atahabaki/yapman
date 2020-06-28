@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-help_command() {
+help_cmd() {
 	if [ "$#" -eq 1 ]
 	then
 		case $1 in

@@ -2,7 +2,7 @@
 
 Yapman is a tool for install/update/remove ... AUR package and more. It's very simple and can be customizable. Good luck! :D
 
-## Operations:
+## Operations
 
 Yapman is operation based tool. So, everything is operation for yapman.
 
@@ -39,7 +39,7 @@ That's all for now. Take care!..
 
 It's really simple. Just paste this:
 
-```
+```bash
 yapman -u
 ```
 
@@ -55,7 +55,7 @@ whenever you type `yapu`, you simply typed `yapman -u`.
 
 Extremly simple:
 
-```
+```bash
 yapman -i <package(s)>
 ```
 
@@ -63,7 +63,7 @@ yapman -i <package(s)>
 
 This one is different from installing package. The difference between is getting a package means (for this tool) downloading a package.
 
-```
+```bash
 yapman -g <package(s)>
 ```
 
@@ -73,7 +73,7 @@ Showing packages' information.
 
 If you were curious about who did this package or what's the dependendies of this. Just type this:
 
-```
+```bash
 yapman -a <package(s)>
 ```
 
@@ -81,7 +81,7 @@ yapman -a <package(s)>
 
 Really simple:
 
-```
+```bash
 yapman -r <package(s)>
 ```
 
@@ -89,7 +89,7 @@ yapman -r <package(s)>
 
 Searching package by its' name:
 
-```
+```bash
 yapman -s <query(s)>
 ```
 
@@ -97,7 +97,7 @@ yapman -s <query(s)>
 
 Clear cache files, too easy:
 
-```
+```bash
 yapman -c
 ```
 
@@ -105,7 +105,7 @@ yapman -c
 
 Nothing could be easier than this one:
 
-```
+```bash
 yapman -v
 ```
 
@@ -113,6 +113,7 @@ yapman -v
 
 We care about you, so we put all information here and to man pages. You can find whatever you want.
 
-```
+```bash
 yapman -h [<operation>]
 ```
+

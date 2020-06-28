@@ -17,7 +17,7 @@ print_ok() {
 	fi
 }
 
-print_warning() {
+print_wrn() {
 	if [ $# -eq 1 ]
 	then
 		"$echo" -e "${WRN} $1"

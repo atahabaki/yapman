@@ -8,7 +8,7 @@ initialize() {
 init() {
 	if [ -d "$YapmanCachePath" ] | [ -e "$YapmanConfigPath" ] | [ -d "$YapmanLogsPath" ] | [ -d "$YapmanPackagePath" ]
 	then
-		print_warning "Already initialized."
+		print_wrn "Already initialized."
 		if confirm "Re-initialize?"
 		then
 			initialize
