@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="181.42999"
+   inkscape:export-xdpi="181.42999"
+   inkscape:export-filename="/home/atahabaki/projects/programming/linux/yapman/yapman-logo3.png"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="yapman.svg"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 285.75 285.75"
+   height="1080"
+   width="1080">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     inkscape:window-maximized="1"
+     inkscape:window-y="18"
+     inkscape:window-x="0"
+     inkscape:window-height="730"
+     inkscape:window-width="1366"
+     showguides="false"
+     gridtolerance="10000"
+     inkscape:snap-path-mask="false"
+     inkscape:snap-path-clip="false"
+     objecttolerance="20"
+     inkscape:lockguides="false"
+     units="px"
+     showgrid="true"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="g111"
+     inkscape:document-units="px"
+     inkscape:cy="540"
+     inkscape:cx="540"
+     inkscape:zoom="0.49722222"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base">
+    <sodipodi:guide
+       id="guide10"
+       orientation="0,1080"
+       position="0,285.75" />
+    <sodipodi:guide
+       id="guide12"
+       orientation="1080,0"
+       position="285.75,285.75" />
+    <sodipodi:guide
+       id="guide14"
+       orientation="0,-1080"
+       position="285.75,0" />
+    <sodipodi:guide
+       id="guide16"
+       orientation="-1080,0"
+       position="0,0" />
+    <inkscape:grid
+       spacingx="0.52916667"
+       spacingy="0.52916667"
+       originy="0"
+       originx="0"
+       id="grid18"
+       type="xygrid" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <g
+       transform="translate(-23.619337)"
+       id="g104">
+      <g
+         aria-label="Y"
+         id="text22"
+         style="font-size:176.389px;line-height:1;font-family:'Fira Code';-inkscape-font-specification:'Fira Code';stroke-width:0.264583"
+         transform="translate(-0.169615,0.6445165)">
+        <path
+           d="m 182.90173,80.731797 -45.3184,72.726533 -5.29166,42.33334 L 127,203.72917 V 153.45833 L 108.47917,127 l -5.29167,-13.22917 29.10417,31.75 z"
+           style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:176.389px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code Light';text-align:center;text-anchor:middle;stroke-width:0.264583"
+           id="path24"
+           sodipodi:nodetypes="ccccccccc" />
+      </g>
+      <g
+         aria-label="APMAN"
+         id="text83"
+         style="font-size:25.4px;line-height:1.25;font-family:'Fira Code';-inkscape-font-specification:'Fira Code';stroke-width:0.264583">
+        <g
+           transform="translate(0,-7.4083337)"
+           id="g111">
+          <path
+             id="path85"
+             style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:25.4px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code Semi-Bold';stroke-width:0.274713"
+             d="m 165.54208,174.625 -1.14198,-4.36649 h -6.04188 l -1.14198,4.36649 h -3.75791 l 5.74974,-19.05 h 4.4617 l 5.73645,19.05 z m -4.16956,-16.22624 -2.36363,9.03601 h 4.71399 z" />
+          <path
+             id="path87"
+             style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:25.4px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code Semi-Bold';stroke-width:0.274713"
+             d="m 184.51751,161.64952 q 0,3.20943 -1.9387,4.79349 -1.93871,1.58405 -5.28498,1.58405 h -2.11134 v 6.59794 h -3.63841 v -19.05 h 5.40449 q 3.63841,0 5.60368,1.52895 1.96526,1.5152 1.96526,4.54557 z m -3.77119,0.0275 q 0,-3.34718 -3.66495,-3.34718 h -1.89888 v 6.90097 h 2.0051 q 3.55873,0 3.55873,-3.55379 z" />
+          <path
+             id="path89"
+             style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:25.4px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code Semi-Bold';stroke-width:0.274713"
+             d="m 199.64209,155.575 1.03575,19.05 h -3.24004 l -0.34525,-8.77429 q -0.0531,-1.32234 -0.0531,-2.72734 0,-2.19013 0.14606,-4.28383 l -2.43002,12.47961 h -2.94792 l -2.60264,-12.47961 q 0.17262,2.30032 0.17262,4.86236 0,1.41876 -0.0265,2.17636 l -0.2523,8.74674 h -3.18692 l 1.03575,-19.05 h 4.03677 l 2.36364,12.57603 2.2574,-12.57603 z" />
+          <path
+             id="path91"
+             style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:25.4px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code Semi-Bold';stroke-width:0.274713"
+             d="m 213.34583,174.625 -1.14199,-4.36649 h -6.04187 l -1.14198,4.36649 h -3.75792 l 5.74975,-19.05 h 4.46168 l 5.73647,19.05 z m -4.16956,-16.22624 -2.36364,9.03601 h 4.714 z" />
+          <path
+             sodipodi:nodetypes="ccccccc"
+             id="path93"
+             style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:25.4px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code Semi-Bold';stroke-width:0.264583"
+             d="m 224.70267,163.5125 -6.55101,11.1125 6.55101,-19.05 7.9375,10.58333 26.45834,-39.6875 -26.45834,47.625 z" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
